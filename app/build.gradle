@@ -26,6 +26,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22")
+    
 }
 
 dependencies {
