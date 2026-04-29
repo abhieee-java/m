@@ -1,4 +1,4 @@
- plugins {
+plugins {
     id 'com.android.application'
 }
 
@@ -29,11 +29,16 @@ android {
 }
 
 dependencies {
+    // Standard Android Libraries
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.core:core:1.13.1'
     implementation 'androidx.recyclerview:recyclerview:1.3.2'
     
-    // Kotlin dependencies moved here to the correct block
+    // --- THE FIX: Material Design Library ---
+    // This allows the app to use BottomNavigationView and FloatingActionButton attributes
+    implementation 'com.google.android.material:material:1.12.0'
+    
+    // Kotlin Support (Kept for library compatibility)
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
 }
