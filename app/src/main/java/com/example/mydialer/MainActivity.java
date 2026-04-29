@@ -9,6 +9,7 @@ import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +17,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView numberDisplay;
     private RecyclerView recentsList;
     private View recentsEmpty;
+    private View dialerSheet; // The sliding panel for the dialer
     private RecentsStore recentsStore;
     private RecentsAdapter recentsAdapter;
 
@@ -39,15 +44,44 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Initialize Views
         numberDisplay = findViewById(R.id.number_display);
         recentsList = findViewById(R.id.recents_list);
         recentsEmpty = findViewById(R.id.recents_empty);
+        dialerSheet = findViewById(R.id.dialer_sheet);
+        FloatingActionButton fab = findViewById(R.id.fab_show_dialer);
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
 
+        // Set up Recents List
         recentsStore = new RecentsStore(this);
         recentsAdapter = new RecentsAdapter(this::onRecentTapped);
         recentsList.setLayoutManager(new LinearLayoutManager(this));
         recentsList.setAdapter(recentsAdapter);
 
+        // THE SWITCH: Show/Hide Dialer
+        fab.setOnClickListener(v -> {
+            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            if (dialerSheet.getVisibility() == View.VISIBLE) {
+                dialerSheet.setVisibility(View.GONE);
+            } else {
+                dialerSheet.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // Bottom Navigation Logic
+        bottomNav.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_favorites) {
+                Toast.makeText(this, "Favorites Coming Soon", Toast.LENGTH_SHORT).show();
+            } else if (itemId == R.id.nav_recents) {
+                // Already on Recents
+            } else if (itemId == R.id.nav_contacts) {
+                Toast.makeText(this, "Contacts Coming Soon", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        });
+
+        // Dialpad Number Listeners
         View.OnClickListener digitListener = v -> {
             v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
             CharSequence label = ((TextView) v).getText();
@@ -60,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
             findViewById(id).setOnClickListener(digitListener);
         }
 
+        // Backspace Logic
         ImageButton backspace = findViewById(R.id.backspace_button);
         backspace.setOnClickListener(v -> {
             v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
@@ -75,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
+        // Call Button Logic
         findViewById(R.id.call_button).setOnClickListener(v -> {
             v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
             attemptCall();
@@ -101,13 +137,14 @@ public class MainActivity extends AppCompatActivity {
         number.setLength(0);
         number.append(tappedNumber);
         refreshDisplay();
+        dialerSheet.setVisibility(View.VISIBLE); // Show dialer if it was hidden
         attemptCall();
     }
 
     private void refreshDisplay() {
         if (number.length() == 0) {
             numberDisplay.setText("");
-            numberDisplay.setHint(R.string.enter_number_hint);
+            numberDisplay.setHint("Enter number");
         } else {
             numberDisplay.setText(number.toString());
         }
