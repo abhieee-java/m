@@ -197,4 +197,38 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
                 == PackageManager.PERMISSION_GRANTED) {
 
-            Intent intent = new
+            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + dialedNumber));
+            startActivity(intent);
+
+        } else {
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQ_PERMISSIONS);
+        }
+    }
+
+    // Permission result
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQ_PERMISSIONS) {
+            boolean allGranted = true;
+
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allGranted = false;
+                    break;
+                }
+            }
+
+            if (allGranted && number.length() > 0) {
+                makeCall();
+            } else if (!allGranted) {
+                Toast.makeText(this,
+                        "Permissions are required for calling and contacts",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+}
