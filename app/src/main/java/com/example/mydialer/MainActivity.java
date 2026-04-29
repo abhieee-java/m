@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,15 +15,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int REQ_CALL_PHONE = 1001;
+    // These are the new permissions needed to read your actual call logs and contacts
+    private static final int REQ_PERMISSIONS = 1001;
+    private final String[] REQUIRED_PERMISSIONS = {
+            Manifest.permission.CALL_PHONE,
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.READ_CALL_LOG
+    };
+
     private final StringBuilder number = new StringBuilder();
     private TextView numberDisplay;
     private View dialerSheet; 
@@ -34,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Ask the user for permission as soon as the app opens
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQ_PERMISSIONS);
+        }
 
         // 1. Initialize views
         dialerSheet = findViewById(R.id.dialer_sheet);
@@ -62,8 +71,8 @@ public class MainActivity extends AppCompatActivity {
                 fab.show(); 
                 selectedFragment = null; 
             } else if (itemId == R.id.nav_contacts) {
-                // Switches to the Settings/Font screen
-                selectedFragment = new SettingsFragment();
+                // Switches to the Add New Contact screen
+                selectedFragment = new ContactsFragment();
                 fab.hide(); 
                 dialerSheet.setVisibility(View.GONE);
             }
@@ -140,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
                 startActivity(intent);
             } else {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, REQ_CALL_PHONE);
+                ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQ_PERMISSIONS);
             }
         }
     }
@@ -148,10 +157,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQ_CALL_PHONE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            makeCall();
-        } else {
-            Toast.makeText(this, "Permission denied to make calls", Toast.LENGTH_SHORT).show();
+        if (requestCode == REQ_PERMISSIONS && grantResults.length > 0) {
+            boolean allGranted = true;
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allGranted = false;
+                    break;
+                }
+            }
+            
+            if (allGranted && number.length() > 0) {
+                makeCall();
+            } else if (!allGranted) {
+                Toast.makeText(this, "Permissions are required to sync contacts and call history", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
