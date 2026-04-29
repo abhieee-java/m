@@ -53,18 +53,18 @@ public class MainActivity extends AppCompatActivity {
             int itemId = item.getItemId();
 
             if (itemId == R.id.nav_favorites) {
-                // We will create FavoritesFragment later
-                Toast.makeText(this, "Favorites Screen", Toast.LENGTH_SHORT).show();
-                fab.hide(); // Hide dialer button on this screen
+                // Switches to the Favorites grid screen
+                selectedFragment = new FavoritesFragment();
+                fab.hide(); 
                 dialerSheet.setVisibility(View.GONE);
             } else if (itemId == R.id.nav_recents) {
-                // Stay on Recents (Home)
+                // Shows the main Recents list (Home)
                 fab.show(); 
-                selectedFragment = null; // Keeps your current recents list visible
+                selectedFragment = null; 
             } else if (itemId == R.id.nav_contacts) {
-                // Switch to our new Settings/Font screen
+                // Switches to the Settings/Font screen
                 selectedFragment = new SettingsFragment();
-                fab.hide(); // Hide dialer button in settings
+                fab.hide(); 
                 dialerSheet.setVisibility(View.GONE);
             }
 
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                         .replace(R.id.fragment_container, selectedFragment)
                         .commit();
             } else {
-                // If recents is clicked, remove any fragment to show the main list
+                // If recents is clicked, remove fragment to show the main list background
                 Fragment current = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
                 if (current != null) {
                     getSupportFragmentManager().beginTransaction().remove(current).commit();
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        // 4. Dialpad Logic (Setting up your 0-9 buttons)
+        // 4. Set up the dialer buttons (0-9, *, #)
         setupDialpad();
     }
 
@@ -106,12 +106,17 @@ public class MainActivity extends AppCompatActivity {
         };
 
         for (int id : dialIds) {
-            findViewById(id).setOnClickListener(listener);
+            View button = findViewById(id);
+            if (button != null) button.setOnClickListener(listener);
         }
 
-        findViewById(R.id.call_button).setOnClickListener(v -> makeCall());
+        findViewById(R.id.call_button).setOnClickListener(v -> {
+            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            makeCall();
+        });
         
         findViewById(R.id.backspace_button).setOnClickListener(v -> {
+            v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
             if (number.length() > 0) {
                 number.deleteCharAt(number.length() - 1);
                 updateDisplay();
@@ -120,17 +125,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateDisplay() {
-        numberDisplay.setText(number.toString());
+        if (number.length() == 0) {
+            numberDisplay.setText("");
+            numberDisplay.setHint("Enter number");
+        } else {
+            numberDisplay.setText(number.toString());
+        }
     }
 
     private void makeCall() {
         if (number.length() > 0) {
-            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number.toString()));
+            String dialedNumber = number.toString();
+            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + dialedNumber));
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
                 startActivity(intent);
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, REQ_CALL_PHONE);
             }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQ_CALL_PHONE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            makeCall();
+        } else {
+            Toast.makeText(this, "Permission denied to make calls", Toast.LENGTH_SHORT).show();
         }
     }
 }
