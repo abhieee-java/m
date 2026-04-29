@@ -6,14 +6,12 @@
     android:background="#000000"
     android:fitsSystemWindows="true">
 
-    <!-- Fragment Container (EMPTY) -->
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_navigation" />
 
-    <!-- Dialer Sheet -->
     <LinearLayout
         android:id="@+id/dialer_sheet"
         android:layout_width="match_parent"
@@ -39,40 +37,40 @@
             android:layout_marginBottom="24dp"
             android:letterSpacing="0.1"
             android:background="@android:color/transparent"
-            android:inputType="phone" />
+            android:inputType="phone"
+            android:focusable="false"
+            android:cursorVisible="false" />
 
-        <!-- Dial Pad -->
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:stretchColumns="*">
 
             <TableRow android:layout_marginBottom="16dp">
-                <TextView android:id="@+id/dial_1" android:text="1" style="@style/DialKey"/>
-                <TextView android:id="@+id/dial_2" android:text="2" style="@style/DialKey"/>
-                <TextView android:id="@+id/dial_3" android:text="3" style="@style/DialKey"/>
+                <TextView android:id="@+id/dial_1" android:text="1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:gravity="center" android:textSize="36sp" android:padding="16dp"/>
+                <TextView android:id="@+id/dial_2" android:text="2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:gravity="center" android:textSize="36sp" android:padding="16dp"/>
+                <TextView android:id="@+id/dial_3" android:text="3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:gravity="center" android:textSize="36sp" android:padding="16dp"/>
             </TableRow>
 
             <TableRow android:layout_marginBottom="16dp">
-                <TextView android:id="@+id/dial_4" android:text="4" style="@style/DialKey"/>
-                <TextView android:id="@+id/dial_5" android:text="5" style="@style/DialKey"/>
-                <TextView android:id="@+id/dial_6" android:text="6" style="@style/DialKey"/>
+                <TextView android:id="@+id/dial_4" android:text="4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:gravity="center" android:textSize="36sp" android:padding="16dp"/>
+                <TextView android:id="@+id/dial_5" android:text="5" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:gravity="center" android:textSize="36sp" android:padding="16dp"/>
+                <TextView android:id="@+id/dial_6" android:text="6" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:gravity="center" android:textSize="36sp" android:padding="16dp"/>
             </TableRow>
 
             <TableRow android:layout_marginBottom="16dp">
-                <TextView android:id="@+id/dial_7" android:text="7" style="@style/DialKey"/>
-                <TextView android:id="@+id/dial_8" android:text="8" style="@style/DialKey"/>
-                <TextView android:id="@+id/dial_9" android:text="9" style="@style/DialKey"/>
+                <TextView android:id="@+id/dial_7" android:text="7" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:gravity="center" android:textSize="36sp" android:padding="16dp"/>
+                <TextView android:id="@+id/dial_8" android:text="8" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:gravity="center" android:textSize="36sp" android:padding="16dp"/>
+                <TextView android:id="@+id/dial_9" android:text="9" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:gravity="center" android:textSize="36sp" android:padding="16dp"/>
             </TableRow>
 
             <TableRow>
-                <TextView android:id="@+id/dial_star" android:text="*" style="@style/DialKey"/>
-                <TextView android:id="@+id/dial_0" android:text="0" style="@style/DialKey"/>
-                <TextView android:id="@+id/dial_hash" android:text="#" style="@style/DialKey"/>
+                <TextView android:id="@+id/dial_star" android:text="*" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:gravity="center" android:textSize="36sp" android:padding="16dp"/>
+                <TextView android:id="@+id/dial_0" android:text="0" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:gravity="center" android:textSize="36sp" android:padding="16dp"/>
+                <TextView android:id="@+id/dial_hash" android:text="#" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:gravity="center" android:textSize="36sp" android:padding="16dp"/>
             </TableRow>
         </TableLayout>
 
-        <!-- Call + Backspace -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -101,7 +99,6 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <!-- Floating Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_show_dialer"
         android:layout_width="wrap_content"
@@ -113,7 +110,6 @@
         app:backgroundTint="#FF0000"
         app:tint="#FFFFFF" />
 
-    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
