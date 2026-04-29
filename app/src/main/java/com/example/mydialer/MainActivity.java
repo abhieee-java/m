@@ -1,6 +1,9 @@
 package com.example.mydialer;
 
 import android.Manifest;
+import android.app.role.RoleManager;
+import android.content.Context;
+import android.os.Build;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
