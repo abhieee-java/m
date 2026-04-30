@@ -12,7 +12,7 @@ public class FavoritesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // This will look for fragment_favorites.xml which we will create next
+        // We will build the actual grid of faces later. For now, just load an empty layout so it doesn't crash!
         return inflater.inflate(R.layout.fragment_favorites, container, false);
     }
 }
