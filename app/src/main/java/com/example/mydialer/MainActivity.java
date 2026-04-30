@@ -211,18 +211,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // NEW: Properly placed inside the class so the RecentsFragment can use it!
+    public void makeCallDirectly(String numberToDial) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+            startActivity(new android.content.Intent(android.content.Intent.ACTION_CALL, android.net.Uri.parse("tel:" + numberToDial)));
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQ_PERMISSIONS) {
-            boolean allGranted = true;
-            for (int result : grantResults) {
-                if (result != PackageManager.PERMISSION_GRANTED) {
-                    allGranted = false;
-                    break;
-                }
-            }
-            if (allGranted && number.length() > 0) makeCall();
-        }
-    }
-}
