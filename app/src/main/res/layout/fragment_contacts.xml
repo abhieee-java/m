@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
@@ -29,15 +30,20 @@
                 android:text="Add New Contact"
                 android:textColor="#FFFFFF"
                 android:textSize="24sp"
+                android:fontFamily="@font/ndot"
                 android:layout_centerInParent="true" />
 
             <TextView
+                android:id="@+id/btn_save_contact"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="✓"
                 android:textColor="#FFFFFF"
                 android:textSize="24sp"
-                android:layout_alignParentEnd="true" />
+                android:layout_alignParentEnd="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"/>
         </RelativeLayout>
 
         <LinearLayout
@@ -51,17 +57,17 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:src="@android:drawable/ic_menu_myplaces"
-                android:background="@drawable/bg_pill_button"
+                android:background="@drawable/bg_floating_pill"
                 android:padding="16dp"
                 android:layout_marginBottom="12dp"
-                app:tint="#FFFFFF" xmlns:app="http://schemas.android.com/apk/res-auto"/>
+                app:tint="#FFFFFF" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Edit picture"
                 android:textColor="#FFFFFF"
-                android:background="@drawable/bg_pill_button"
+                android:background="@drawable/bg_floating_pill"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:paddingTop="8dp"
@@ -72,11 +78,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/bg_rounded_input"
+            android:background="@drawable/bg_floating_pill"
             android:padding="8dp"
             android:layout_marginBottom="16dp">
             
             <EditText
+                android:id="@+id/input_first_name"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@android:color/transparent"
@@ -90,6 +97,7 @@
             <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#222222" />
             
             <EditText
+                android:id="@+id/input_surname"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@android:color/transparent"
@@ -103,16 +111,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/bg_rounded_input"
+            android:background="@drawable/bg_floating_pill"
             android:padding="8dp"
             android:layout_marginBottom="16dp">
             
             <RelativeLayout android:layout_width="match_parent" android:layout_height="50dp">
                 <EditText
+                    android:id="@+id/input_number"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
                     android:hint="Number"
+                    android:inputType="phone"
                     android:textColorHint="#888888"
                     android:textColor="#FFFFFF"
                     android:paddingStart="16dp"
@@ -124,7 +134,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="16dp"
-                    android:background="@drawable/bg_pill_button"
+                    android:background="@drawable/bg_floating_pill"
                     android:backgroundTint="#FFC107"
                     android:gravity="center"
                     android:text="+"
@@ -143,18 +153,21 @@
                 android:textColor="#FFFFFF"
                 android:paddingStart="16dp"
                 android:drawableStart="@android:drawable/arrow_down_float"
-                android:drawablePadding="12dp" />
+                android:drawablePadding="12dp"
+                android:focusable="false"
+                android:clickable="false"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/bg_rounded_input"
+            android:background="@drawable/bg_floating_pill"
             android:padding="8dp"
             android:layout_marginBottom="16dp">
             
             <EditText
+                android:id="@+id/input_company"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@android:color/transparent"
@@ -168,6 +181,7 @@
             <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#222222" />
             
             <EditText
+                android:id="@+id/input_job_title"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@android:color/transparent"
@@ -176,6 +190,5 @@
                 android:textColor="#FFFFFF"
                 android:paddingStart="52dp" />
         </LinearLayout>
-
     </LinearLayout>
 </ScrollView>
