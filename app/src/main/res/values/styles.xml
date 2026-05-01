@@ -1,38 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-
     <style name="Theme.MyDialer" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">#E91E63</item>
         <item name="colorPrimaryDark">#000000</item>
         <item name="colorAccent">#E91E63</item>
-
         <item name="android:windowBackground">#000000</item>
-        <item name="android:statusBarColor">#000000</item>
-        <item name="android:navigationBarColor">#000000</item>
-
+        
         <item name="android:textColorPrimary">#FFFFFF</item>
         <item name="android:textColorSecondary">#888888</item>
-        
-        <item name="android:fontFamily">@font/ndot</item>
     </style>
-
-    <style name="DialKey">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textSize">34sp</item>
-        <item name="android:padding">16dp</item>
-        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
-        <item name="android:clickable">true</item>
-        <item name="android:focusable">true</item>
-    </style>
-
-    <style name="NothingCard">
-        <item name="android:background">@drawable/bg_floating_pill</item>
-        <item name="android:padding">16dp</item>
-        <item name="android:layout_margin">8dp</item>
-    </style>
-
 </resources>
