@@ -11,7 +11,7 @@ import java.util.List;
 
 public class RecentsAdapter extends RecyclerView.Adapter<RecentsAdapter.ViewHolder> {
 
-    // Must use CallLogHelper.CallItem to match the Fragment
+    // Matches the List<CallItem> from your fragment
     private List<CallLogHelper.CallItem> callItems = new ArrayList<>();
     private final OnItemClickListener listener;
 
@@ -31,6 +31,7 @@ public class RecentsAdapter extends RecyclerView.Adapter<RecentsAdapter.ViewHold
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Matches the file name item_recent.xml
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recent, parent, false);
         return new ViewHolder(view);
     }
@@ -38,8 +39,12 @@ public class RecentsAdapter extends RecyclerView.Adapter<RecentsAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         CallLogHelper.CallItem item = callItems.get(position);
+        
+        // Safety check for unknown numbers
         holder.nameView.setText(item.name.equals("Unknown") ? item.number : item.name);
-        holder.timeView.setText(item.date);
+        holder.timeView.setText("Mobile, " + item.date);
+
+        // Click to dial
         holder.itemView.setOnClickListener(v -> listener.onItemClick(item.number));
     }
 
@@ -49,9 +54,12 @@ public class RecentsAdapter extends RecyclerView.Adapter<RecentsAdapter.ViewHold
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView nameView, timeView;
+        TextView nameView;
+        TextView timeView;
+
         ViewHolder(View view) {
             super(view);
+            // Matches the IDs in item_recent.xml
             nameView = view.findViewById(R.id.call_name);
             timeView = view.findViewById(R.id.call_time);
         }
