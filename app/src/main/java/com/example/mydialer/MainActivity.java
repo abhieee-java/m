@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQ_PERMISSIONS = 1001;
 
-    // 1. ADVANCED PERMISSIONS: Required for the system to trust a default dialer
     private final String[] REQUIRED_PERMISSIONS = {
             Manifest.permission.CALL_PHONE,
             Manifest.permission.READ_CONTACTS,
@@ -43,12 +42,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        
+        try {
+            setContentView(R.layout.activity_main);
+        } catch (Exception e) {
+            Toast.makeText(this, "Layout Crash! Check XML", Toast.LENGTH_LONG).show();
+            return;
+        }
 
-        // 2. TRIGGER DEFAULT APP PROMPT
         checkDefaultDialer();
 
-        // Request permissions
         if (!hasAllPermissions()) {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQ_PERMISSIONS);
         }
@@ -58,54 +61,48 @@ public class MainActivity extends AppCompatActivity {
         numberDisplay = findViewById(R.id.number_display);
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
 
-        // FAB toggle dialer
-        fab.setOnClickListener(v -> {
-            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-            toggleDialer();
-        });
+        if (fab != null) {
+            fab.setOnClickListener(v -> {
+                v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                toggleDialer();
+            });
+        }
 
-        // Bottom navigation
-        bottomNav.setOnItemSelectedListener(item -> {
-            Fragment selectedFragment = null;
-            int itemId = item.getItemId();
+        if (bottomNav != null) {
+            bottomNav.setOnItemSelectedListener(item -> {
+                Fragment selectedFragment = null;
+                int itemId = item.getItemId();
 
-            if (itemId == R.id.nav_favorites) {
-                selectedFragment = new FavoritesFragment();
-                fab.hide();
-                dialerSheet.setVisibility(View.GONE);
-            } else if (itemId == R.id.nav_recents) {
-                selectedFragment = new RecentsFragment();
-                fab.show();
-            } else if (itemId == R.id.nav_contacts) {
-                selectedFragment = new ContactsFragment();
-                fab.hide();
-                dialerSheet.setVisibility(View.GONE);
-            }
+                if (itemId == R.id.nav_favorites) {
+                    selectedFragment = new FavoritesFragment();
+                    if (fab != null) fab.hide();
+                    if (dialerSheet != null) dialerSheet.setVisibility(View.GONE);
+                } else if (itemId == R.id.nav_recents) {
+                    selectedFragment = new RecentsFragment();
+                    if (fab != null) fab.show();
+                } else if (itemId == R.id.nav_contacts) {
+                    selectedFragment = new ContactsFragment();
+                    if (fab != null) fab.hide();
+                    if (dialerSheet != null) dialerSheet.setVisibility(View.GONE);
+                }
 
-            if (selectedFragment != null) {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, selectedFragment)
-                        .commit();
-            }
-            return true;
-        });
+                if (selectedFragment != null) {
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, selectedFragment).commit();
+                }
+                return true;
+            });
+        }
 
-        // Default to Recents
         if (savedInstanceState == null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, new RecentsFragment())
-                    .commit();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new RecentsFragment()).commit();
         }
 
         setupDialpad();
-
-        // 3. INTENT HANDLING: Proves to Android this is a real dialer
         handleExternalDialIntent(getIntent());
     }
 
-    // Handles numbers passed from other apps while My Dialer is already open
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -120,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 number.setLength(0);
                 number.append(uriNumber);
                 updateDisplay();
-                dialerSheet.setVisibility(View.VISIBLE); // Pop up the sheet automatically
+                if (dialerSheet != null) dialerSheet.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -128,11 +125,8 @@ public class MainActivity extends AppCompatActivity {
     private void checkDefaultDialer() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             RoleManager roleManager = (RoleManager) getSystemService(Context.ROLE_SERVICE);
-            if (roleManager != null && roleManager.isRoleAvailable(RoleManager.ROLE_DIALER)) {
-                if (!roleManager.isRoleHeld(RoleManager.ROLE_DIALER)) {
-                    Intent intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_DIALER);
-                    startActivityForResult(intent, 999);
-                }
+            if (roleManager != null && roleManager.isRoleAvailable(RoleManager.ROLE_DIALER) && !roleManager.isRoleHeld(RoleManager.ROLE_DIALER)) {
+                startActivityForResult(roleManager.createRequestRoleIntent(RoleManager.ROLE_DIALER), 999);
             }
         } else {
             Intent intent = new Intent(android.telecom.TelecomManager.ACTION_CHANGE_DEFAULT_DIALER);
@@ -143,18 +137,14 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean hasAllPermissions() {
         for (String permission : REQUIRED_PERMISSIONS) {
-            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) return false;
         }
         return true;
     }
 
     private void toggleDialer() {
-        if (dialerSheet.getVisibility() == View.VISIBLE) {
-            dialerSheet.setVisibility(View.GONE);
-        } else {
-            dialerSheet.setVisibility(View.VISIBLE);
+        if (dialerSheet != null) {
+            dialerSheet.setVisibility(dialerSheet.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -177,26 +167,34 @@ public class MainActivity extends AppCompatActivity {
             if (button != null) button.setOnClickListener(listener);
         }
 
-        findViewById(R.id.call_button).setOnClickListener(v -> {
-            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-            makeCall();
-        });
+        View callBtn = findViewById(R.id.call_button);
+        if (callBtn != null) {
+            callBtn.setOnClickListener(v -> {
+                v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                makeCall();
+            });
+        }
 
-        findViewById(R.id.backspace_button).setOnClickListener(v -> {
-            v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
-            if (number.length() > 0) {
-                number.deleteCharAt(number.length() - 1);
-                updateDisplay();
-            }
-        });
+        View backBtn = findViewById(R.id.backspace_button);
+        if (backBtn != null) {
+            backBtn.setOnClickListener(v -> {
+                v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+                if (number.length() > 0) {
+                    number.deleteCharAt(number.length() - 1);
+                    updateDisplay();
+                }
+            });
+        }
     }
 
     private void updateDisplay() {
-        if (number.length() == 0) {
-            numberDisplay.setText("");
-            numberDisplay.setHint("Enter number");
-        } else {
-            numberDisplay.setText(number.toString());
+        if (numberDisplay != null) {
+            if (number.length() == 0) {
+                numberDisplay.setText("");
+                numberDisplay.setHint("Enter number");
+            } else {
+                numberDisplay.setText(number.toString());
+            }
         }
     }
 
@@ -204,17 +202,15 @@ public class MainActivity extends AppCompatActivity {
         if (number.length() == 0) return;
         String dialedNumber = number.toString();
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + dialedNumber));
-            startActivity(intent);
+            startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + dialedNumber)));
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQ_PERMISSIONS);
         }
     }
 
-    // NEW: Properly placed inside the class so the RecentsFragment can use it!
     public void makeCallDirectly(String numberToDial) {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-            startActivity(new android.content.Intent(android.content.Intent.ACTION_CALL, android.net.Uri.parse("tel:" + numberToDial)));
+            startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + numberToDial)));
         }
     }
 
